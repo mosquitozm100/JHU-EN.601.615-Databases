@@ -1,0 +1,431 @@
+1.
++-------+----------+-------+---------+
+| Fname | Lname    | Fname | Lname   |
++-------+----------+-------+---------+
+| Jandy | Nelson   | Stacy | Prater  |
+| Ian   | Thornton | David | Shieber |
++-------+----------+-------+---------+
+2 rows in set (0.005 sec)
+
+2.
++-------+-------+-----------------+----------+------------------+
+| Fname | Lname | CarManufacturer | CarModel | miles_per_gallon |
++-------+-------+-----------------+----------+------------------+
+| Lisa  | Apap  | Porsche         | 911      |                7 |
++-------+-------+-----------------+----------+------------------+
+1 row in set (0.002 sec)
+
+3.
++-------+--------+------+-------+
+| Fname | Lname  | Age  | major |
++-------+--------+------+-------+
+| Bruce | Wilson |   27 |   600 |
++-------+--------+------+-------+
+1 row in set (0.002 sec)
+
+4.
++--------+--------+
+| Fname  | Lname  |
++--------+--------+
+| Steven | Davis  |
+| Bruce  | Wilson |
++--------+--------+
+2 rows in set (0.002 sec)
+
+5.
++-------+-------+
+| Fname | Lname |
++-------+-------+
+| Paul  | Brody |
+| Lisa  | Cheng |
++-------+-------+
+2 rows in set (0.002 sec)
+
+7.
++-------------------------+-------------------------+-------------------------+
+| min(C.miles_per_gallon) | max(C.miles_per_gallon) | avg(C.miles_per_gallon) |
++-------------------------+-------------------------+-------------------------+
+|                       7 |                      19 |                 12.6667 |
++-------------------------+-------------------------+-------------------------+
+1 row in set (0.002 sec)
+
+8.
++------------+------------+------------+
+| min(S.Age) | max(S.Age) | avg(S.Age) |
++------------+------------+------------+
+|         16 |         26 |    19.2857 |
++------------+------------+------------+
+1 row in set (0.002 sec)
+
+10.
++------------+
+| avg(S.Age) |
++------------+
+|    20.1818 |
++------------+
+1 row in set (0.003 sec)
+
+11.
++-------+---------------+-----------------+
+| actid | activity_name | count(P1.StuID) |
++-------+---------------+-----------------+
+|   780 | Football      |              14 |
++-------+---------------+-----------------+
+1 row in set (0.002 sec)
+
+12.
++----------------+
+| activity_name  |
++----------------+
+| Square Dancing |
++----------------+
+1 row in set (0.002 sec)
+
+13.
+
+Empty set (0.010 sec)
+
+14.
++---------+----------+---------+----------+
+| Fname   | Lname    | Fname   | Lname    |
++---------+----------+---------+----------+
+| Linda   | Smith    | Michael | Goodrich |
+| Paul    | Gompers  | Michael | Goodrich |
+| Michael | Leighton | Michael | Goodrich |
+| Eric    | Tai      | David   | Yarowsky |
+| Arthur  | Pang     | David   | Yarowsky |
++---------+----------+---------+----------+
+5 rows in set (0.020 sec)
+
+15.
++-------+---------+--------+-------+
+| Fname | Lname   | Fname  | Lname |
++-------+---------+--------+-------+
+| Paul  | Gompers | Steven | Davis |
+| Derek | Lee     | Susan  | Lee   |
+| Tracy | Kim     | Sarah  | Smith |
++-------+---------+--------+-------+
+3 rows in set (0.005 sec)
+
+16.
++----------------+--------+
+| dorm_name      | dormid |
++----------------+--------+
+| Bud Jones Hall |    110 |
++----------------+--------+
+1 row in set (1.574 sec)
+
+17.
+17.1
+
+Query OK, 0 rows affected (0.011 sec)
+
+Query OK, 961 rows affected (0.008 sec)
+Records: 961  Duplicates: 0  Warnings: 0
+
+17.2
+
+Query OK, 0 rows affected (0.010 sec)
+
+Query OK, 961 rows affected (0.018 sec)
+Records: 961  Duplicates: 0  Warnings: 0
+
+17.3
+
+Query OK, 0 rows affected (0.010 sec)
+
+Query OK, 117 rows affected (0.023 sec)
+Records: 117  Duplicates: 0  Warnings: 0
+
+17.4
+
+Query OK, 0 rows affected (0.010 sec)
+
+Query OK, 117 rows affected (0.003 sec)
+Records: 117  Duplicates: 0  Warnings: 0 
+
+
+18.
++-----------+----------------+
+| City_Code | count(S.StuID) |
++-----------+----------------+
+| BAL       |              4 |
+| HKG       |              3 |
+| NYC       |              3 |
+| PHL       |              3 |
+| PIT       |              4 |
+| WAS       |              3 |
+| YYZ       |              2 |
++-----------+----------------+
+7 rows in set (0.002 sec)
+
+19.
++-------+--------+-----------+-------+---------+
+| Fname | Lname  | City_name | State | country |
++-------+--------+-----------+-------+---------+
+| Stacy | Prater | Baltimore | MD    | USA     |
++-------+--------+-----------+-------+---------+
+1 row in set (0.003 sec)
+
+
+20.
++---------+-------+---------+----------+
+| Lname   | Fname | country | Distance |
++---------+-------+---------+----------+
+| Cheng   | Lisa  | USA     |     2457 |
+| Gompers | Paul  | CANADA  |      347 |
+| Tai     | Eric  | CANADA  |      347 |
+| Kim     | Tracy | CHINA   |     8409 |
+| Lee     | Susan | CHINA   |     8409 |
+| Pang    | Eric  | CHINA   |     8409 |
+| Wilson  | Bruce | UK      |     3652 |
++---------+-------+---------+----------+
+7 rows in set (0.003 sec)
+
+
+21.
++---------------+
+| activity_name |
++---------------+
+| Canoeing      |
++---------------+
+1 row in set (0.009 sec)
+
+22.
+Empty set (0.005 sec)
+
+23.
+Empty set (0.023 sec)
+
+24.
+Empty set (0.004 sec)
+
+25.
++------------------------------+
+| CName                        |
++------------------------------+
+| INTRODUCTION TO PROBABILITY  |
+| MULTIMEDIA COMPUTING         |
+| SUPERCOMPUTING               |
+| DATABASE SYSTEMS             |
+| EXPLORING THE INTERNET       |
+| DATA STRUCTURES in JAVA      |
+| COMPUTER SYSTEM FUNDAMENTALS |
+| DISTRIBUTED SYSTEMS          |
++------------------------------+
+8 rows in set (0.007 sec)
+
+26.
++-------+----------+----------------------+----------------+
+| Fname | Lname    | Dorm_name            | count(V.StuID) |
++-------+----------+----------------------+----------------+
+| Linda | Smith    | Smith Hall           |              1 |
+| Lisa  | Apap     | Dorm-plex 2000       |              1 |
+| Mark  | Schwartz | Fawlty Towers        |              1 |
+| Stacy | Prater   | Dorm-plex 2000       |              1 |
+| Jun   | Han      | Anonymous Donor Hall |              1 |
++-------+----------+----------------------+----------------+
+5 rows in set (0.002 sec)
+
+27.
++-------+----------+----------------------+-------------+
+| Fname | Lname    | Dorm_name            | Vio_count_1 |
++-------+----------+----------------------+-------------+
+| Linda | Smith    | Smith Hall           |           1 |
+| Lisa  | Apap     | Dorm-plex 2000       |           1 |
+| Mark  | Schwartz | Fawlty Towers        |           1 |
+| Stacy | Prater   | Dorm-plex 2000       |           1 |
+| Jun   | Han      | Anonymous Donor Hall |           1 |
++-------+----------+----------------------+-------------+
+5 rows in set (0.001 sec)
+
+29.
++--------------------------------------+----------+-----------------------+
+| CName                                | Division | DName                 |
++--------------------------------------+----------+-----------------------+
+| NUMERICAL ANALYSIS                   | EN       | Mathematical Sciences |
+| SUPERCOMPUTING                       | EN       | Computer Science      |
+| DATABASE SYSTEMS                     | EN       | Computer Science      |
+| DISTRIBUTED SYSTEMS                  | EN       | Computer Science      |
+| COMPUTER VISION                      | EN       | Computer Science      |
+| INTRO TO NATURAL LANGUAGE PROCESSING | EN       | Computer Science      |
+| INTRODUCTION TO PROBABILITY          | EN       | Mathematical Sciences |
+| EXPLORING THE INTERNET               | EN       | Computer Science      |
+| DATA STRUCTURES in JAVA              | EN       | Computer Science      |
+| COMPUTER SYSTEM FUNDAMENTALS         | EN       | Computer Science      |
+| MIND, BRAIN, COMPUTERS               | AS       | Cognitive Science     |
+| COGNITIVE NEUROSCIENCE               | AS       | Cognitive Science     |
+| SOUND STRUCTURES IN NATURAL LANGUAGE | AS       | Cognitive Science     |
+| COMP. MODELS OF SENTENCE PROCESSING  | AS       | Cognitive Science     |
+| INTRO TO PROGRAMMING IN JAVA         | EN       | Computer Science      |
+| LINEAR ALGEBRA AND DIFFERENTIAL EQNS | EN       | Mathematical Sciences |
+| APPLIED STATISTICS AND DATA ANALYSIS | EN       | Mathematical Sciences |
+| COMBINATORIAL ANALYSIS               | EN       | Mathematical Sciences |
+| PROBABILITY THEORY I                 | EN       | Mathematical Sciences |
+| STOCHASTIC PROCESSES II              | EN       | Mathematical Sciences |
+| ALGORITHMS I                         | EN       | Computer Science      |
++--------------------------------------+----------+-----------------------+
+21 rows in set (0.012 sec)
+
+30.
+Empty set (0.001 sec)
+
+31.
+Empty set (0.005 sec)
+
+32.
++---------------+------------+
+| Dorm_name     | dorm_count |
++---------------+------------+
+| Smith Hall    |          1 |
+| Fawlty Towers |          1 |
++---------------+------------+
+2 rows in set (0.002 sec)
+
+33.
++------------+-----------------------------------------------+
+| Dorm_name  | Dorm_Vote.Vote_Count / Dorm_Stud.People_Count |
++------------+-----------------------------------------------+
+| Smith Hall |                                        0.1667 |
++------------+-----------------------------------------------+
+1 row in set (0.004 sec)
+
+34.
++-------+---------+------+-----------------+------------+---------------+------------+
+| Fname | Lname   | Age  | CandidateName   | Party      | CandidateName | Party      |
++-------+---------+------+-----------------+------------+---------------+------------+
+| Linda | Smith   |   18 | Hillary Clinton | Democrat   | Joe Biden     | Democrat   |
+| David | Shieber |   20 | Donald Trump    | Republican | Joe Biden     | Democrat   |
+| Stacy | Prater  |   18 | Hillary Clinton | Democrat   | Donald Trump  | Republican |
++-------+---------+------+-----------------+------------+---------------+------------+
+3 rows in set (0.002 sec)
+
+35.
++-------+---------+-------+
+| Fname | Lname   | State |
++-------+---------+-------+
+| Stacy | Prater  | MD    |
+| David | Shieber | NY    |
++-------+---------+-------+
+2 rows in set (0.056 sec)
+
+36.
+Empty set (0.002 sec)
+
+37.
+Empty set (0.005 sec)
+
+40.
++--------+-------+-----------+------------+------------+----------------------------------------+
+| Fname  | Lname | Company   | Start_Date | End_Date   | datediff(W.End_Date, W.Start_Date) + 1 |
++--------+-------+-----------+------------+------------+----------------------------------------+
+| Shiela | Jones | Microsoft | 2019-05-01 | 2019-07-20 |                                     81 |
+| Derek  | Lee   | Apple     | 2019-04-10 | 2019-08-10 |                                    123 |
++--------+-------+-----------+------------+------------+----------------------------------------+
+2 rows in set (0.002 sec)
+
+41.
++-------+-------+---------+---------+
+| Fname | Lname | Company | Day_Sum |
++-------+-------+---------+---------+
+| Derek | Lee   | Apple   |     123 |
++-------+-------+---------+---------+
+1 row in set (0.004 sec)
+
+42.
++-------+-------+----------------------+
+| Fname | Lname | Dorm_name            |
++-------+-------+----------------------+
+| Linda | Smith | Anonymous Donor Hall |
+| Lisa  | Apap  | Fawlty Towers        |
++-------+-------+----------------------+
+2 rows in set (0.002 sec)
+
+43.
+Empty set (0.049 sec)
+
+44.
++---------+--------+------+---------+--------+
+| Fname   | Lname  | Age  | PetName | PetAge |
++---------+--------+------+---------+--------+
+| Charles | Norris |   18 | Mike    |      2 |
+| Paul    | Brody  |   18 | Mike    |      2 |
+| Lisa    | Cheng  |   21 | Bruno   |      2 |
++---------+--------+------+---------+--------+
+3 rows in set (0.011 sec)
+
+45.
++-------+-------+----------------------+-------------+---------+--------+----------------------+-------------+
+| Fname | Lname | dorm_name            | room_number | Fname   | Lname  | dorm_name            | room_number |
++-------+-------+----------------------+-------------+---------+--------+----------------------+-------------+
+| Linda | Smith | Anonymous Donor Hall |         105 | Charles | Norris | Grad Student Asylum  |         211 |
+| Linda | Smith | Anonymous Donor Hall |         105 | Paul    | Brody  | Fawlty Towers        |         208 |
+| Linda | Smith | Anonymous Donor Hall |         105 | Lisa    | Cheng  | Anonymous Donor Hall |         211 |
++-------+-------+----------------------+-------------+---------+--------+----------------------+-------------+
+3 rows in set (0.003 sec)
+
+46.
++----------------------+-------------------------------+------------------+
+| dorm_name            | count(distinct L.room_number) | student_capacity |
++----------------------+-------------------------------+------------------+
+| Anonymous Donor Hall |                             2 |              128 |
+| Bud Jones Hall       |                             1 |              116 |
+| Dorm-plex 2000       |                             6 |              400 |
+| Fawlty Towers        |                             9 |              355 |
+| Grad Student Asylum  |                             1 |              256 |
+| Smith Hall           |                             4 |               85 |
+| University Hovels    |                             1 |               40 |
++----------------------+-------------------------------+------------------+
+7 rows in set (0.002 sec)
+
+47.
++----------------------+-------------------------------+
+| dorm_name            | count(distinct L.room_number) |
++----------------------+-------------------------------+
+| Grad Student Asylum  |                             1 |
+| Anonymous Donor Hall |                             2 |
+| Fawlty Towers        |                             1 |
++----------------------+-------------------------------+
+3 rows in set (0.001 sec)
+
+48.
++----------------------+--------------------------------------------------------------+--------------------------+
+| dorm_name            | count(distinct L.room_number) / Occupied_Room.Total_Occupied | count(distinct HP.PetID) |
++----------------------+--------------------------------------------------------------+--------------------------+
+| Grad Student Asylum  |                                                       1.0000 |                        1 |
+| Anonymous Donor Hall |                                                       1.0000 |                        2 |
+| Fawlty Towers        |                                                       0.1111 |                        2 |
++----------------------+--------------------------------------------------------------+--------------------------+
+3 rows in set (0.002 sec)
+
+49.
++-------+-------+------+----------------------+
+| Fname | Lname | Age  | Dorm_name            |
++-------+-------+------+----------------------+
+| Linda | Smith |   18 | Anonymous Donor Hall |
++-------+-------+------+----------------------+
+1 row in set (0.004 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

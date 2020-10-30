@@ -1,0 +1,1188 @@
+MySQL [cs41518_yzhou113_db]> # Query Number 1
+MySQL [cs41518_yzhou113_db]> SELECT dorm_name 
+    -> FROM Dorm 
+    -> WHERE gender = 'M';
++----------------+
+| dorm_name      |
++----------------+
+| Bud Jones Hall |
++----------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 2
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Dname
+    -> FROM Student AS a, Department
+    -> WHERE Major = DNO AND a.StuID IN 
+    -> (SELECT b.StuID
+    -> FROM Enrolled_in AS b, Course AS c, Faculty AS d
+    -> WHERE d.Lname = 'Taylor' AND d.Fname = 'Russell' 
+    -> AND FacID = Instructor AND c.CID = b.CID);
++---------+---------+------------------+
+| Fname   | LName   | Dname            |
++---------+---------+------------------+
+| Dinesh  | Kumar   | Computer Science |
+| Charles | Norris  | Computer Science |
+| George  | Andreou | ECE              |
+| Eric    | Pang    | ECE              |
++---------+---------+------------------+
+4 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 3
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Age, Sex
+    -> FROM Student
+    -> WHERE StuID NOT IN
+    -> (SELECT DISTINCT a.stuid FROM Lives_in AS a, Lives_in AS b
+    -> WHERE a.stuid != b.stuid AND a.dormid = b.dormid AND a.room_number = b.room_number);
++---------+----------+------+------+
+| Fname   | LName    | Age  | Sex  |
++---------+----------+------+------+
+| Dinesh  | Kumar    |   20 | M    |
+| Andy    | Schultz  |   18 | M    |
+| Lisa    | Apap     |   18 | F    |
+| Jandy   | Nelson   |   20 | F    |
+| Eric    | Tai      |   19 | M    |
+| David   | Adams    |   22 | M    |
+| Charles | Norris   |   18 | M    |
+| Mark    | Schwartz |   17 | M    |
+| Bruce   | Wilson   |   27 | M    |
+| Michael | Leighton |   20 | M    |
+| Arthur  | Pang     |   18 | M    |
+| Michael | Woods    |   17 | M    |
+| Stacy   | Prater   |   18 | F    |
+| Eric    | Pang     |   19 | M    |
+| Paul    | Brody    |   18 | M    |
+| Eric    | Rugh     |   20 | M    |
+| Jun     | Han      |   17 | M    |
+| Lisa    | Cheng    |   21 | F    |
+| William | Simms    |   18 | M    |
+| Eric    | Epp      |   18 | M    |
++---------+----------+------+------+
+20 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 4
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Dname
+    -> FROM Student AS a, Department as e
+    -> WHERE a.Major = e.DNO AND a.StuID NOT IN
+    -> (SELECT b.StuID
+    -> FROM Student AS b, Enrolled_in AS c, Course AS d
+    -> WHERE b.StuID = c.StuID AND c.CID = d.CID AND d.DNO = b.Major);
++---------+----------+-----------------------+
+| Fname   | LName    | Dname                 |
++---------+----------+-----------------------+
+| Eric    | Tai      | Computer Science      |
+| Ian     | Thornton | ECE                   |
+| George  | Andreou  | ECE                   |
+| Michael | Woods    | Chemical Engineering  |
+| David   | Shieber  | ECE                   |
+| Stacy   | Prater   | Chemical Engineering  |
+| Paul    | Brody    | ECE                   |
+| Jun     | Han      | History               |
+| Sarah   | Smith    | Mathematical Sciences |
+| William | Simms    | Mathematical Sciences |
++---------+----------+-----------------------+
+10 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 5 & Assuming each faculty can only participate in the same activity once 
+MySQL [cs41518_yzhou113_db]> SELECT activity_name 
+    -> FROM Activity AS c
+    -> WHERE c.actid IN
+    -> (SELECT b.actid 
+    -> FROM Faculty_Participates_in AS b 
+    -> GROUP BY b.actid 
+    -> HAVING COUNT(FacID) = (SELECT COUNT(FacID) FROM Faculty_Participates_in 
+    -> AS a GROUP BY a.actid ORDER BY COUNT(FacID) DESC LIMIT 1));
++-------------------+
+| activity_name     |
++-------------------+
+| Crossword Puzzles |
++-------------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 6 
+MySQL [cs41518_yzhou113_db]> SELECT activity_name, number_of_participants
+    -> FROM Activity AS b, 
+    -> (SELECT a.actid, COUNT(stuid) AS number_of_participants 
+    -> FROM Participates_in AS a 
+    -> GROUP BY a.actid 
+    -> HAVING number_of_participants >= 3) AS r1
+    -> WHERE b.actid = r1.actid
+    -> ORDER BY number_of_participants DESC, activity_name ASC;
++-------------------+------------------------+
+| activity_name     | number_of_participants |
++-------------------+------------------------+
+| Football          |                     14 |
+| Soccer            |                      9 |
+| Crossword Puzzles |                      7 |
+| Chess             |                      6 |
+| Mountain Climbing |                      6 |
+| Baseball          |                      5 |
+| Kayaking          |                      5 |
+| Canoeing          |                      4 |
+| Volleyball        |                      4 |
+| Canasta           |                      3 |
+| Spelunking        |                      3 |
++-------------------+------------------------+
+11 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 7
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Dname
+    -> FROM Student AS c, Department AS d
+    -> WHERE c.Major = d.DNO AND c.StuID IN 
+    -> (SELECT a.stuid 
+    -> FROM Participates_in AS a 
+    -> GROUP BY a.stuid 
+    -> HAVING COUNT(a.actid) >= 2) AND c.StuID IN 
+    -> (SELECT b.stuid
+    -> FROM Participates_in AS b, Activity AS c
+    -> WHERE b.actid = c.actid AND c.activity_name = 'Baseball');
++---------+--------+----------------------+
+| Fname   | LName  | Dname                |
++---------+--------+----------------------+
+| Dinesh  | Kumar  | Computer Science     |
+| Eric    | Tai    | Computer Science     |
+| Charles | Norris | Computer Science     |
+| Stacy   | Prater | Chemical Engineering |
++---------+--------+----------------------+
+4 rows in set (0.02 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 8
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Dname
+    -> FROM Student AS c, Department AS d
+    -> WHERE c.Major = d.DNO AND c.StuID IN 
+    -> (SELECT a.stuid 
+    -> FROM Participates_in AS a 
+    -> GROUP BY a.stuid 
+    -> HAVING COUNT(a.actid) >= 2) 
+    -> AND c.StuID NOT IN
+    -> (SELECT b.StuID
+    -> FROM Enrolled_in AS b, Gradeconversion AS d 
+    -> WHERE b.Grade = lettergrade AND d.gradepoint < 
+    -> (SELECT e.gradepoint FROM Gradeconversion AS e WHERE e.lettergrade = 'B-')
+    -> );
++---------+---------+-----------------------+
+| Fname   | LName   | Dname                 |
++---------+---------+-----------------------+
+| Linda   | Smith   | Computer Science      |
+| Jandy   | Nelson  | Computer Science      |
+| Charles | Norris  | Computer Science      |
+| David   | Shieber | ECE                   |
+| Lisa    | Cheng   | Mathematical Sciences |
+| Eric    | Epp     | Cognitive Science     |
++---------+---------+-----------------------+
+6 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 9
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Dname, r3.number_of_activities
+    -> FROM Student AS c, Department AS d 
+    -> ,(SELECT r1.WhoIsLoved, COUNT(r2.actid) AS number_of_activities
+    -> FROM
+    -> ((SELECT a.WhoIsLoved 
+    -> FROM Loves AS a 
+    -> GROUP BY a.WhoIsLoved
+    -> HAVING COUNT(a.WhoLoves) = (SELECT COUNT(b.WhoLoves) FROM Loves 
+    -> AS b GROUP BY b.WhoIsLoved ORDER BY COUNT(b.WhoLoves) DESC LIMIT 1)) 
+    -> AS r1 LEFT JOIN Participates_in AS r2 ON r1.WhoIsLoved = r2.stuid)
+    -> GROUP BY r1.WhoIsLoved) AS r3
+    -> WHERE c.Major = d.DNO AND c.StuID = r3.WhoIsLoved;
++-------+-------+-----------------------+----------------------+
+| Fname | LName | Dname                 | number_of_activities |
++-------+-------+-----------------------+----------------------+
+| Sarah | Smith | Mathematical Sciences |                    0 |
++-------+-------+-----------------------+----------------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 10
+MySQL [cs41518_yzhou113_db]> SELECT Fname, Lname, b.DName, a.Building AS office, b.Building AS department
+    -> FROM Faculty AS a, Department AS b, Member_of AS c
+    -> WHERE a.FacID = c.FacID AND c.DNO = b.DNO AND a.Building != b.Building;
++-----------+-------------+-----------------------+---------+------------+
+| Fname     | Lname       | DName                 | office  | department |
++-----------+-------------+-----------------------+---------+------------+
+| Lawrence  | Wolff       | ECE                   | NEB     | Barton     |
+| Steven    | Salzberg    | Cognitive Science     | NEB     | Krieger    |
+| Daniel    | Naiman      | Mathematical Sciences | Krieger | Maryland   |
+| Edward    | Scheinerman | Mathematical Sciences | Krieger | Maryland   |
+| Carey     | Priebe      | Mathematical Sciences | Krieger | Maryland   |
+| James     | Fill        | Mathematical Sciences | Krieger | Maryland   |
+| Alan      | Goldman     | Mathematical Sciences | Krieger | Maryland   |
+| Cheng     | Cheng       | Mathematical Sciences | Krieger | Maryland   |
+| Shih-Ping | Han         | Mathematical Sciences | Krieger | Maryland   |
+| Frederick | Jelinek     | Computer Science      | Barton  | NEB        |
+| Frederick | Jelinek     | Cognitive Science     | Barton  | Krieger    |
+| Lancelot  | James       | Mathematical Sciences | Krieger | Maryland   |
+| John      | Wierman     | Mathematical Sciences | Krieger | Maryland   |
+| Lenore    | Cowen       | Mathematical Sciences | Krieger | Maryland   |
+| Michael   | Brent       | Computer Science      | Krieger | NEB        |
+| Jong-Shi  | Pang        | Mathematical Sciences | Krieger | Maryland   |
+| Colin     | Wu          | Mathematical Sciences | Krieger | Maryland   |
+| Leslie    | Hall        | Mathematical Sciences | Krieger | Maryland   |
++-----------+-------------+-----------------------+---------+------------+
+18 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 11
+MySQL [cs41518_yzhou113_db]> SELECT r1.DName, COUNT(DISTINCT r2.CID) AS number_of_courses
+    -> FROM
+    -> (Department AS r1 LEFT JOIN
+    -> (SELECT a.DNO AS FDNO, b.CID
+    -> FROM Member_of AS a, Course AS b
+    -> WHERE a.FacID = b.Instructor AND a.Appt_Type = 'Primary') AS r2 ON r1.DNO = r2.FDNO)
+    -> GROUP BY r1.DNO;
++--------------------------+-------------------+
+| DName                    | number_of_courses |
++--------------------------+-------------------+
+| History of Art           |                 0 |
+| Biology                  |                 0 |
+| Chemistry                |                 0 |
+| Classics                 |                 0 |
+| Cognitive Science        |                12 |
+| English                  |                 0 |
+| Anthropology             |                 0 |
+| German                   |                 0 |
+| History                  |                 0 |
+| Mathematics              |                 0 |
+| Near Eastern Studies     |                 0 |
+| History of Science       |                 0 |
+| Philosophy               |                 0 |
+| Physics and Astronomy    |                 0 |
+| Economics                |                 0 |
+| Political Science        |                 0 |
+| Psychology               |                 0 |
+| French                   |                 0 |
+| Hispanic/Italian Studies |                 0 |
+| ECE                      |                20 |
+| Mechanical Engineering   |                 0 |
+| Chemical Engineering     |                 0 |
+| Mathematical Sciences    |                19 |
+| Civil Engineering        |                 0 |
+| Biomedical Engineering   |                 0 |
+| Computer Science         |                25 |
++--------------------------+-------------------+
+26 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 12
+MySQL [cs41518_yzhou113_db]> SELECT a.dorm_name, a.student_capacity
+    -> FROM Dorm AS a LEFT JOIN Has_amenity AS b ON a.dormid = b.dormid
+    -> WHERE a.gender = 'F' AND b.amenid IS NULL;
+Empty set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 13
+MySQL [cs41518_yzhou113_db]> SELECT c.dormid, c.student_capacity
+    -> FROM Dorm AS c, 
+    -> (SELECT a.dormid
+    -> FROM Has_amenity AS a
+    -> GROUP BY a.dormid
+    -> HAVING COUNT(a.amenid) = (SELECT COUNT(b.amenid)
+    -> FROM Has_amenity AS b
+    -> GROUP BY b.dormid ORDER BY COUNT(b.amenid) DESC LIMIT 1)) AS r1
+    -> WHERE c.dormid = r1.dormid;
++--------+------------------+
+| dormid | student_capacity |
++--------+------------------+
+|    160 |              400 |
++--------+------------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 14
+MySQL [cs41518_yzhou113_db]> SELECT c.Fname AS student_fname, c.LName AS student_lname, d.DName AS major, e.Fname AS advisor_fname, e.Lname AS advisor_lname 
+    -> FROM Student AS c, Department AS d, Faculty AS e
+    -> WHERE c.Major = d.DNO AND c.Advisor = e.FacID AND c.StuID IN
+    -> (SELECT a.StuID 
+    -> FROM Enrolled_in AS a, Course AS b
+    -> WHERE a.CID = b.CID AND b.CName = 'Computer Vision' AND a.Grade = 'A+');
+Empty set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 16
+MySQL [cs41518_yzhou113_db]> SELECT AVG(Age) AS Average_Age
+    -> FROM Student AS r1 LEFT JOIN Participates_in AS r2 ON r1.StuID = r2.stuid
+    -> WHERE r2.actid IS NULL;
++-------------+
+| Average_Age |
++-------------+
+|     19.2500 |
++-------------+
+1 row in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 17
+MySQL [cs41518_yzhou113_db]> SELECT x.Fname AS stu_fname, x.LName AS stu_lname, y.DName AS major, z.Fname AS advi_fname, z.Lname AS advi_lname 
+    -> FROM Student AS x, Department AS y, Faculty AS z
+    -> WHERE x.Major = y.DNO AND x.Advisor = z.FacID AND x.StuID IN
+    -> (SELECT DISTINCT e.StuID
+    -> FROM Student AS e, City AS f, Direct_distance AS g
+    -> WHERE f.city_name = 'Baltimore' AND f.state = 'MD' AND f.city_code = g.city1_code AND e.city_code = g.city2_code AND g.distance = (SELECT MAX(c.distance)
+    -> FROM Student AS a, City AS b, Direct_distance AS c
+    -> WHERE b.city_name = 'Baltimore' AND b.state = 'MD' AND b.city_code = c.city1_code AND a.city_code = c.city2_code));
++-----------+-----------+------------------+------------+------------+
+| stu_fname | stu_lname | major            | advi_fname | advi_lname |
++-----------+-----------+------------------+------------+------------+
+| Tracy     | Kim       | Computer Science | Baruch     | Awerbuch   |
+| Susan     | Lee       | Computer Science | Lawrence   | Wolff      |
+| Eric      | Pang      | ECE              | John       | Goutsias   |
++-----------+-----------+------------------+------------+------------+
+3 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 18
+MySQL [cs41518_yzhou113_db]> SELECT x.Fname AS student_fname, x.LName AS student_lname, y.DName AS major, z.Fname AS advisor_fname, z.Lname AS advisor_lname 
+    -> FROM Student AS x, Department AS y, Faculty AS z
+    -> WHERE x.Major = y.DNO AND x.Advisor = z.FacID AND x.StuID IN
+    -> (SELECT DISTINCT r2.StuID
+    -> FROM (SELECT k.StuID, k.city_code
+    -> FROM Student AS k, Enrolled_in AS l, Course AS m
+    -> WHERE k.StuID = l.StuID AND l.CID = m.CID AND m.CName = 'Computer Vision') AS r2, City AS f, Direct_distance AS g
+    -> WHERE f.city_name = 'Baltimore' AND f.state = 'MD' AND f.city_code = g.city1_code AND r2.city_code = g.city2_code AND g.distance = (SELECT MAX(c.distance) FROM 
+    -> (SELECT h.StuID, h.city_code
+    -> FROM Student AS h, Enrolled_in AS i, Course AS j
+    -> WHERE h.StuID = i.StuID AND i.CID = j.CID AND j.CName = 'Computer Vision') AS r1, City AS b, Direct_distance AS c
+    -> WHERE b.city_name = 'Baltimore' AND b.state = 'MD' AND b.city_code = c.city1_code AND r1.city_code = c.city2_code));
++---------------+---------------+------------------+---------------+---------------+
+| student_fname | student_lname | major            | advisor_fname | advisor_lname |
++---------------+---------------+------------------+---------------+---------------+
+| Bruce         | Wilson        | Computer Science | Gerald        | Masson        |
++---------------+---------------+------------------+---------------+---------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 22
+MySQL [cs41518_yzhou113_db]> SELECT a.activity_name
+    -> FROM Activity AS a
+    -> WHERE a.actid IN
+    -> (SELECT DISTINCT b.actid
+    -> FROM Participates_in AS b, Student AS c
+    -> WHERE b.stuid = c.StuID AND c.Sex = 'M')
+    -> AND a.actid NOT IN
+    -> (SELECT DISTINCT d.actid
+    -> FROM Participates_in AS d, Student AS e
+    -> WHERE d.stuid = e.StuID AND e.Sex = 'F');
++-----------------+
+| activity_name   |
++-----------------+
+| Volleyball      |
+| Extreme Canasta |
+| Proselytizing   |
++-----------------+
+3 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 23
+MySQL [cs41518_yzhou113_db]> SELECT r1.CName, r1.CID
+    -> FROM Course AS r1 LEFT JOIN Enrolled_in AS r2 ON r1.CID = r2.CID
+    -> GROUP BY r1.CID
+    -> HAVING COUNT(r2.StuID) < 3;
++-----------------------------------------+---------+
+| CName                                   | CID     |
++-----------------------------------------+---------+
+| LANGUAGE AND MIND                       | 050.102 |
+| FORMAL METHODS IN COGNITIVE SCIENCE     | 050.370 |
+| LANGUAGE DEVELOPMENT                    | 050.381 |
+| THE HISTORY OF ROMANCE LANGUAGES        | 050.427 |
+| FORMAL METHODS IN COGNITIVE SCIENCE     | 050.670 |
+| RESEARCH SEMINAR IN COGNITIVE PROCESSES | 050.802 |
+| COMP. MODELS OF SENTENCE PROCESSING     | 050.821 |
+| ACCOUNTING I                            | 500.203 |
+| ACCOUNTING II                           | 500.204 |
+| BUSINESS LAW I                          | 500.205 |
+| BUSINESS LAW II                         | 500.206 |
+| INTRODUCTION TO ECE                     | 520.137 |
+| FIELDS, MATTER AND WAVES                | 520.219 |
+| INTEGRATED ELECTRONICS                  | 520.325 |
+| BASIC COMMUNICATIONS                    | 520.401 |
+| FIBER OPTICS AND PHOTONICS              | 520.410 |
+| ITERATIVE ALGORITHMS                    | 520.419 |
+| INTRODUCTION TO NON-LINEAR SYSTEMS      | 520.421 |
+| TOPICS IN MEDICAL IMAGING SYSTEMS       | 520.432 |
+| DIGITAL SIGNAL PROCESSING               | 520.435 |
+| PROCESSING AND RECOGNITION OF SPEECH    | 520.475 |
+| ANALOG AND DIGITAL VLSI SYSTEMS         | 520.490 |
+| ELECTROMAGNETIC WAVES                   | 520.603 |
+| SOLID STATE PHYSICS                     | 520.605 |
+| NONLINEAR TECHNICAL IMAGE PROCESSING    | 520.609 |
+| RANDOM SIGNAL ANALYSIS                  | 520.651 |
+| STATISTICAL ANALYSIS                    | 550.111 |
+| DISCRETE MATHEMATICS                    | 550.171 |
+| INTRODUCTION TO OPTIMIZATION            | 550.361 |
+| STOCHASTIC PROCESSES II                 | 550.626 |
+| STATISTICAL INFERENCE                   | 550.631 |
+| FOUNDATIONS OF OPTIMIZATION             | 550.661 |
+| PERCOLATION THEORY                      | 550.721 |
+| TOPICS IN OPERATIONS RESEARCH           | 550.750 |
+| TOPICS IN APPLIED MATH                  | 550.790 |
+| COMPUTER LITERACY                       | 600.101 |
+| INTRODUCTION TO COMPUTER SCIENCE        | 600.103 |
+| INTRO TO PROGRAMMING IN C/C++           | 600.109 |
+| JAVA PROGRAMMING                        | 600.121 |
+| UNIX SYSTEMS PROGRAMMING                | 600.211 |
+| COMPUTATIONAL MODELS                    | 600.271 |
+| INTRODUCTION TO ALGORITHMS              | 600.363 |
+| COMPUTER SYSTEMS                        | 600.433 |
+| COMPUTER SCIENCE INTERNSHIP             | 600.509 |
+| COMPUTER SCIENCE SEMINAR                | 600.601 |
+| HIGH PERFORMANCE GRAPHICS AND MODELING  | 600.657 |
+| SEMINAR ON COMPUTATIONAL GEOMETRY       | 600.787 |
++-----------------------------------------+---------+
+47 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 24
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName FROM Student WHERE StuID IN
+    -> (SELECT DISTINCT WhoIsLoved FROM Loves) 
+    -> AND StuID IN 
+    -> (SELECT DISTINCT StuID 
+    -> FROM Has_Allergy AS a, Allergy_Type AS b 
+    -> WHERE a.Allergy = b.Allergy AND b.AllergyType = 'environmental');
++--------+---------+
+| Fname  | LName   |
++--------+---------+
+| Tracy  | Kim     |
+| Paul   | Gompers |
+| Eric   | Tai     |
+| Derek  | Lee     |
+| David  | Adams   |
+| Steven | Davis   |
+| Bruce  | Wilson  |
+| Stacy  | Prater  |
+| Paul   | Brody   |
+| Lisa   | Cheng   |
++--------+---------+
+10 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 25
+MySQL [cs41518_yzhou113_db]> SELECT g.CName, g.CID FROM Course AS g WHERE g.CID IN (
+    -> SELECT d.CID FROM Enrolled_in AS d LEFT JOIN (SELECT e.stuid FROM Lives_in AS e, Dorm AS f WHERE e.dormid = f.dormid AND f.dorm_name = 'Bud Jones Hall') AS r2 ON d.StuID = r2.stuid GROUP BY d.CID HAVING COUNT(r2.stuid) = (SELECT COUNT(r1.stuid) FROM Enrolled_in AS c LEFT JOIN (SELECT a.stuid FROM Lives_in AS a, Dorm AS b WHERE a.dormid = b.dormid AND b.dorm_name = 'Bud Jones Hall') AS r1 ON c.StuID = r1.stuid GROUP BY c.CID ORDER BY COUNT(r1.stuid) DESC LIMIT 1));
++------------------------------+---------+
+| CName                        | CID     |
++------------------------------+---------+
+| DATA STRUCTURES in JAVA      | 600.227 |
+| DATABASE SYSTEMS             | 600.315 |
+| COMPUTER SYSTEM FUNDAMENTALS | 600.333 |
+| DISTRIBUTED SYSTEMS          | 600.337 |
+| INTRODUCTION TO PROBABILITY  | 550.420 |
++------------------------------+---------+
+5 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 26 
+MySQL [cs41518_yzhou113_db]> SELECT e.CName, e.CID, r1.AandAPlus_count
+    -> FROM Course AS e, (SELECT c.CID, COUNT(r2.StuID) AS AandAPlus_count FROM Course AS c LEFT JOIN (SELECT d.StuID, d.CID FROM Enrolled_in AS d WHERE d.Grade = 'A' OR d.Grade = 'A+') AS r2 ON c.CID = r2.CID GROUP BY c.CID) AS r1 
+    -> WHERE e.CID = r1.CID AND e.CID IN (SELECT a.CID FROM Course AS a, Department AS b WHERE a.DNO = b.DNO AND (b.DName = 'Computer Science' OR b.DName = 'ECE'));
++----------------------------------------+---------+-----------------+
+| CName                                  | CID     | AandAPlus_count |
++----------------------------------------+---------+-----------------+
+| INTRODUCTION TO ECE                    | 520.137 |               0 |
+| CIRCUITS                               | 520.213 |               1 |
+| FIELDS, MATTER AND WAVES               | 520.219 |               0 |
+| INTEGRATED ELECTRONICS                 | 520.325 |               0 |
+| ECE LABORATORY                         | 520.345 |               1 |
+| MICROPROCESSOR LAB I                   | 520.349 |               2 |
+| CONTROL SYSTEMS                        | 520.353 |               1 |
+| BASIC COMMUNICATIONS                   | 520.401 |               0 |
+| FIBER OPTICS AND PHOTONICS             | 520.410 |               0 |
+| ITERATIVE ALGORITHMS                   | 520.419 |               0 |
+| INTRODUCTION TO NON-LINEAR SYSTEMS     | 520.421 |               0 |
+| TOPICS IN MEDICAL IMAGING SYSTEMS      | 520.432 |               0 |
+| DIGITAL SIGNAL PROCESSING              | 520.435 |               0 |
+| PROCESSING AND RECOGNITION OF SPEECH   | 520.475 |               0 |
+| ANALOG AND DIGITAL VLSI SYSTEMS        | 520.490 |               0 |
+| ELECTROMAGNETIC WAVES                  | 520.603 |               0 |
+| SOLID STATE PHYSICS                    | 520.605 |               0 |
+| NONLINEAR TECHNICAL IMAGE PROCESSING   | 520.609 |               0 |
+| RANDOM SIGNAL ANALYSIS                 | 520.651 |               0 |
+| COMPUTER LITERACY                      | 600.101 |               0 |
+| INTRODUCTION TO COMPUTER SCIENCE       | 600.103 |               1 |
+| INTRO TO PROGRAMMING IN JAVA           | 600.107 |               3 |
+| INTRO TO PROGRAMMING IN C/C++          | 600.109 |               0 |
+| EXPLORING THE INTERNET                 | 600.113 |               1 |
+| JAVA PROGRAMMING                       | 600.121 |               0 |
+| UNIX SYSTEMS PROGRAMMING               | 600.211 |               1 |
+| DATA STRUCTURES in JAVA                | 600.227 |               8 |
+| MULTIMEDIA COMPUTING                   | 600.232 |               1 |
+| COMPUTATIONAL MODELS                   | 600.271 |               0 |
+| SUPERCOMPUTING                         | 600.303 |               5 |
+| DATABASE SYSTEMS                       | 600.315 |               6 |
+| COMPUTER SYSTEM FUNDAMENTALS           | 600.333 |               4 |
+| DISTRIBUTED SYSTEMS                    | 600.337 |               4 |
+| INTRODUCTION TO ALGORITHMS             | 600.363 |               0 |
+| DATABASE SYSTEMS                       | 600.415 |               2 |
+| COMPUTER SYSTEMS                       | 600.433 |               0 |
+| DISTRIBUTED SYSTEMS                    | 600.437 |               2 |
+| QUANTITATIVE MEDICAL COMPUTING         | 600.445 |               1 |
+| COMPUTER VISION                        | 600.461 |               3 |
+| ALGORITHMS I                           | 600.463 |               4 |
+| INTRO TO NATURAL LANGUAGE PROCESSING   | 600.465 |               3 |
+| COMPUTER SCIENCE INTERNSHIP            | 600.509 |               0 |
+| COMPUTER SCIENCE SEMINAR               | 600.601 |               0 |
+| HIGH PERFORMANCE GRAPHICS AND MODELING | 600.657 |               0 |
+| SEMINAR ON COMPUTATIONAL GEOMETRY      | 600.787 |               0 |
++----------------------------------------+---------+-----------------+
+45 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 27
+MySQL [cs41518_yzhou113_db]> SELECT e.Fname, e.LName FROM Student AS e WHERE e.StuID IN (
+    -> SELECT DISTINCT r1.StuID FROM (SELECT a.StuID, a.Allergy FROM Has_Allergy AS a, Allergy_Type AS b WHERE a.Allergy = b.Allergy AND b.AllergyType = 'food') AS r1, (SELECT c.StuID, c.Allergy FROM Has_Allergy AS c, Allergy_Type AS d WHERE c.Allergy = d.Allergy AND d.AllergyType = 'food') AS r2 WHERE r1.StuID = r2.StuID AND r1.Allergy != r2.Allergy);
++---------+----------+
+| Fname   | LName    |
++---------+----------+
+| Lisa    | Apap     |
+| Derek   | Lee      |
+| Susan   | Lee      |
+| Mark    | Schwartz |
+| Michael | Leighton |
+| Michael | Woods    |
+| Jun     | Han      |
+| Sarah   | Smith    |
++---------+----------+
+8 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 28
+MySQL [cs41518_yzhou113_db]> SELECT c.Fname, c.LName FROM Student AS c WHERE c.StuID IN (  
+    -> SELECT a.StuID FROM Has_Allergy AS a, Allergy_Type AS b WHERE a.Allergy = b.Allergy GROUP BY a.StuID HAVING COUNT(DISTINCT b.AllergyType) = (SELECT COUNT(DISTINCT AllergyType) FROM Allergy_Type));
++-------+-------+
+| Fname | LName |
++-------+-------+
+| Lisa  | Apap  |
+| Derek | Lee   |
++-------+-------+
+2 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 29
+MySQL [cs41518_yzhou113_db]> SELECT r3.Allergy, r3.AllergyType FROM 
+    -> (SELECT d.StuID, d.Allergy, e.AllergyType FROM Has_Allergy AS d, Allergy_Type AS e WHERE d.Allergy = e.Allergy) AS r3 LEFT JOIN (SELECT f.StuID FROM Student AS f WHERE f.Age > 25) AS r4 ON r3.StuID = r4.StuID GROUP BY r3.Allergy HAVING COUNT(r4.StuID) = (SELECT COUNT(r2.StuID) FROM 
+    -> (SELECT a.StuID, a.Allergy, b.AllergyType FROM Has_Allergy AS a, Allergy_Type AS b WHERE a.Allergy = b.Allergy) AS r1 LEFT JOIN (SELECT c.StuID FROM Student AS c WHERE c.Age > 25) AS r2 ON r1.StuID = r2.StuID GROUP BY r1.Allergy DESC LIMIT 1);
++-------------+---------------+
+| Allergy     | AllergyType   |
++-------------+---------------+
+| Tree Pollen | environmental |
++-------------+---------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 30 & Assuming each student have at most one roommate
+MySQL [cs41518_yzhou113_db]> SELECT e.Fname AS Fname1, e.LName AS Lname1, r2.s1 AS stuid1,r2.s2 AS stuid2,f.Fname AS Fname2, f.LName AS Lname2 FROM Student AS e, (SELECT s1,s2 FROM Preferences AS c, (SELECT a.stuid AS s1, b.stuid AS s2 FROM Lives_in AS a, Lives_in AS b WHERE a.stuid != b.stuid AND a.dormid = b.dormid AND a.room_number = b.room_number) AS r1, Preferences AS d WHERE c.StuID = r1.s1 AND d.StuID = r1.s2 AND (c.SleepHabits != d.SleepHabits OR c.MusicType != d.MusicType OR (c.Smoking = 'Yes' AND d.Smoking = 'no') OR (d.Smoking = 'Yes' AND c.Smoking = 'no'))) AS r2, Student AS f WHERE e.StuID = r2.s1 AND f.StuID = r2.s2;
++--------+----------+--------+--------+--------+----------+
+| Fname1 | Lname1   | stuid1 | stuid2 | Fname2 | Lname2   |
++--------+----------+--------+--------+--------+----------+
+| Eric   | Brown    |   1032 |   1001 | Linda  | Smith    |
+| Sarah  | Smith    |   1031 |   1002 | Tracy  | Kim      |
+| Sarah  | Schmidt  |   1035 |   1003 | Shiela | Jones    |
+| Steven | Davis    |   1012 |   1005 | Paul   | Gompers  |
+| Paul   | Gompers  |   1005 |   1012 | Steven | Davis    |
+| George | Andreou  |   1021 |   1020 | Ian    | Thornton |
+| Ian    | Thornton |   1020 |   1021 | George | Andreou  |
+| Mark   | Goldman  |   1025 |   1023 | David  | Shieber  |
+| David  | Shieber  |   1023 |   1025 | Mark   | Goldman  |
+| Tracy  | Kim      |   1002 |   1031 | Sarah  | Smith    |
+| Linda  | Smith    |   1001 |   1032 | Eric   | Brown    |
+| Shiela | Jones    |   1003 |   1035 | Sarah  | Schmidt  |
++--------+----------+--------+--------+--------+----------+
+12 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 31
+MySQL [cs41518_yzhou113_db]> SELECT r2.DName, r2.DNO, r2.total, (r2.total - r1.non_smoker) AS smoker, (r1.non_smoker/r2.total*100) AS percent_non_smoker
+    -> FROM
+    -> (SELECT b.DNO, COUNT(a.StuID) AS non_smoker FROM Student AS a, Department AS b, Preferences AS c WHERE a.StuID = c.StuID AND (c.Smoking = 'no' OR c.Smoking = 'no-accept')  AND a.Major = b.DNO GROUP BY b.DNO) AS r1,
+    -> (SELECT e.DNO, e.DName, COUNT(d.StuID) AS total FROM Student AS d, Department AS e, Preferences AS f WHERE d.StuID = f.StuID AND d.Major = e.DNO GROUP BY e.DNO) AS r2
+    -> WHERE r1.DNO = r2.DNO;
++-----------------------+------+-------+--------+--------------------+
+| DName                 | DNO  | total | smoker | percent_non_smoker |
++-----------------------+------+-------+--------+--------------------+
+| Cognitive Science     |   50 |     2 |      0 |           100.0000 |
+| History               |  100 |     1 |      0 |           100.0000 |
+| ECE                   |  520 |     6 |      5 |            16.6667 |
+| Chemical Engineering  |  540 |     2 |      1 |            50.0000 |
+| Mathematical Sciences |  550 |     5 |      1 |            80.0000 |
+| Computer Science      |  600 |    18 |      9 |            50.0000 |
++-----------------------+------+-------+--------+--------------------+
+6 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 32
+MySQL [cs41518_yzhou113_db]> SELECT r4.DName, r4.DNO
+    -> FROM
+    -> (SELECT bb.DNO, COUNT(aa.StuID) AS smoker FROM Student AS aa, Department AS bb, Preferences AS cc WHERE aa.StuID = cc.StuID AND cc.Smoking = 'Yes' AND aa.Major = bb.DNO GROUP BY bb.DNO) AS r3,
+    -> (SELECT ee.DNO, ee.DName, COUNT(dd.StuID) AS total FROM Student AS dd, Department AS ee, Preferences AS ff WHERE dd.StuID = ff.StuID AND dd.Major = ee.DNO GROUP BY ee.DNO) AS r4
+    -> WHERE r4.total >= 3 AND r3.DNO = r4.DNO AND (r3.smoker/r4.total*100) =
+    -> (
+    -> SELECT MAX(r1.smoker/r2.total*100)
+    -> FROM
+    -> (SELECT b.DNO, COUNT(a.StuID) AS smoker FROM Student AS a, Department AS b, Preferences AS c WHERE a.StuID = c.StuID AND c.Smoking = 'Yes' AND a.Major = b.DNO GROUP BY b.DNO) AS r1,
+    -> (SELECT e.DNO, e.DName, COUNT(d.StuID) AS total FROM Student AS d, Department AS e, Preferences AS f WHERE d.StuID = f.StuID AND d.Major = e.DNO GROUP BY e.DNO) AS r2
+    -> WHERE r1.DNO = r2.DNO
+    -> );
++-------+------+
+| DName | DNO  |
++-------+------+
+| ECE   |  520 |
++-------+------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 33
+MySQL [cs41518_yzhou113_db]> SELECT r1.state, r1.Allergy, r1.AllergyType
+    -> FROM
+    -> (SELECT a.state, c.Allergy, d.AllergyType, COUNT(b.StuID) AS cnt FROM City AS a, Student AS b, Has_Allergy AS c, Allergy_Type AS d WHERE a.city_code = b.city_code AND b.StuID = c.StuID AND c.Allergy = d.Allergy AND a.state IN 
+    -> (SELECT e.state FROM City AS e, Student AS f WHERE e.city_code = f.city_code GROUP BY e.state HAVING COUNT(f.StuID) >= 2)
+    -> GROUP BY a.state, c.Allergy, d.AllergyType) AS r1 LEFT JOIN
+    -> (SELECT a.state, c.Allergy, d.AllergyType, COUNT(b.StuID) AS cnt FROM City AS a, Student AS b, Has_Allergy AS c, Allergy_Type AS d WHERE a.city_code = b.city_code AND b.StuID = c.StuID AND c.Allergy = d.Allergy AND a.state IN 
+    -> (SELECT e.state FROM City AS e, Student AS f WHERE e.city_code = f.city_code GROUP BY e.state HAVING COUNT(f.StuID) >= 2)
+    -> GROUP BY a.state, c.Allergy, d.AllergyType) AS r2 ON r1.state = r2.state AND r1.cnt < r2.cnt
+    -> WHERE r2.cnt IS NULL;
++-------+--------------+---------------+
+| state | Allergy      | AllergyType   |
++-------+--------------+---------------+
+| BE    | Eggs         | food          |
+| BE    | Nuts         | food          |
+| BE    | Soy          | food          |
+| CA    | Grass Pollen | environmental |
+| CA    | Tree Pollen  | environmental |
+| DC    | Dog          | animal        |
+| DC    | Tree Pollen  | environmental |
+| EN    | Tree Pollen  | environmental |
+| HK    | Grass Pollen | environmental |
+| HK    | Nuts         | food          |
+| HK    | Shellfish    | food          |
+| HK    | Soy          | food          |
+| HK    | Tree Pollen  | environmental |
+| IL    | Nuts         | food          |
+| MD    | Cat          | animal        |
+| MD    | Nuts         | food          |
+| MD    | Ragweed      | environmental |
+| MD    | Tree Pollen  | environmental |
+| MI    | Milk         | food          |
+| MI    | Nuts         | food          |
+| NY    | Tree Pollen  | environmental |
+| ON    | Tree Pollen  | environmental |
+| PA    | Nuts         | food          |
+| PA    | Ragweed      | environmental |
+| TX    | Anchovies    | food          |
+| TX    | Cat          | animal        |
+| TX    | Dog          | animal        |
+| TX    | Eggs         | food          |
+| TX    | Grass Pollen | environmental |
+| TX    | Milk         | food          |
+| TX    | Nuts         | food          |
+| TX    | Ragweed      | environmental |
+| TX    | Shellfish    | food          |
+| TX    | Tree Pollen  | environmental |
++-------+--------------+---------------+
+34 rows in set (0.07 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 34
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName FROM Student WHERE StuID IN
+    -> (SELECT a.StuID FROM Student AS a, Has_Allergy AS b, Allergy_Type AS c WHERE a.StuID = b.StuID AND b.Allergy = c.Allergy AND c.AllergyType = 'environmental')
+    -> AND StuID IN
+    -> (SELECT a.StuID FROM Student AS a, Preferences AS b WHERE a.StuID = b.StuID AND b.Smoking = 'Yes');
++--------+----------+
+| Fname  | LName    |
++--------+----------+
+| Tracy  | Kim      |
+| Lisa   | Apap     |
+| Eric   | Tai      |
+| Derek  | Lee      |
+| Ian    | Thornton |
+| George | Andreou  |
+| Stacy  | Prater   |
+| Mark   | Goldman  |
+| Paul   | Brody    |
+| Lisa   | Cheng    |
++--------+----------+
+10 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 35
+MySQL [cs41518_yzhou113_db]> SELECT r2.FName AS Student_Fname, r2.Lname AS Student_LName, r2.Age, r3.DName, r1.Fname AS Advisor_Fname, r1.Lname AS Advisor_Lname FROM
+    -> (SELECT CID, FacID, Fname, Lname FROM Faculty, Course WHERE FacID = Instructor) AS r1,
+    -> (SELECT b.CID, FName, Lname, Age, Major, Advisor FROM Student AS a, Enrolled_in AS b WHERE a.StuID = b.StuID) AS r2,
+    -> Department AS r3
+    -> WHERE r1.CID = r2.CID AND r1.FacID = r2.Advisor AND r2.Major = r3.DNO;
++---------------+---------------+------+-------------------+---------------+---------------+
+| Student_Fname | Student_LName | Age  | DName             | Advisor_Fname | Advisor_Lname |
++---------------+---------------+------+-------------------+---------------+---------------+
+| Tracy         | Kim           |   19 | Computer Science  | Baruch        | Awerbuch      |
+| Shiela        | Jones         |   21 | Computer Science  | Eric          | Brill         |
+| Paul          | Gompers       |   26 | Computer Science  | Michael       | Goodrich      |
+| Lisa          | Apap          |   18 | Computer Science  | Yair          | Amir          |
+| Mark          | Schwartz      |   17 | Computer Science  | David         | Yarowsky      |
+| Sarah         | Schmidt       |   26 | Cognitive Science | Robert        | Frank         |
++---------------+---------------+------+-------------------+---------------+---------------+
+6 rows in set (0.05 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 36
+MySQL [cs41518_yzhou113_db]> SELECT r1.Division, COUNT(r2.StuID) AS total_enrollment
+    -> FROM 
+    -> (SELECT DISTINCT Division FROM Department) AS r1 LEFT JOIN 
+    -> (SELECT a.Division, c.StuID FROM Department AS a, Course AS b, Enrolled_in AS c WHERE a.DNO = b.DNO AND b.CID = c.CID) AS r2 ON r1.Division = r2.Division
+    -> GROUP BY r1.Division;
++----------+------------------+
+| Division | total_enrollment |
++----------+------------------+
+| AS       |               18 |
+| EN       |              192 |
++----------+------------------+
+2 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 37
+MySQL [cs41518_yzhou113_db]> SELECT Fname, COUNT(FacID) AS frequency FROM Faculty GROUP BY Fname HAVING COUNT(FacID) > 1 ORDER BY COUNT(FacID) DESC;
++---------+-----------+
+| Fname   | frequency |
++---------+-----------+
+| Michael |         3 |
+| Robert  |         2 |
+| John    |         2 |
+| William |         2 |
++---------+-----------+
+4 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 38
+MySQL [cs41518_yzhou113_db]> SELECT r2.Fname, COUNT(r2.FacID) AS frequency FROM ((SELECT Fname, FacID FROM Faculty) UNION ALL (SELECT Fname, StuID FROM Student)) AS r2 GROUP BY r2.Fname HAVING COUNT(r2.FacID) = (SELECT COUNT(r1.FacID) FROM ((SELECT Fname, FacID FROM Faculty) UNION ALL (SELECT Fname, StuID FROM Student)) AS r1 GROUP BY r1.Fname ORDER BY COUNT(r1.FacID) DESC LIMIT 1);
++-------+-----------+
+| Fname | frequency |
++-------+-----------+
+| Eric  |         6 |
++-------+-----------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 39
+MySQL [cs41518_yzhou113_db]> SELECT d.DNO, d.DName, r5.student_enrollment FROM Department AS d, 
+    -> (SELECT r3.DNO, COUNT(r4.StuID) AS student_enrollment
+    -> FROM
+    -> (SELECT DNO FROM Department) AS r3
+    -> LEFT JOIN 
+    -> (SELECT a.DNO, c.StuID FROM Department AS a, Course AS b, Enrolled_in AS c WHERE a.DNO = b.DNO AND b.CID = c.CID) AS r4 ON r3.DNO = r4.DNO
+    -> GROUP BY r3.DNO HAVING COUNT(r4.StuID) = (
+    -> SELECT COUNT(r2.StuID)
+    -> FROM
+    -> (SELECT DNO FROM Department) AS r1
+    -> LEFT JOIN 
+    -> (SELECT a.DNO, c.StuID FROM Department AS a, Course AS b, Enrolled_in AS c WHERE a.DNO = b.DNO AND b.CID = c.CID) AS r2 ON r1.DNO = r2.DNO
+    -> GROUP BY r1.DNO ORDER BY COUNT(r2.StuID) ASC LIMIT 1
+    -> )) AS r5 WHERE d.DNO = r5.DNO;
++------+--------------------------+--------------------+
+| DNO  | DName                    | student_enrollment |
++------+--------------------------+--------------------+
+|   10 | History of Art           |                  0 |
+|   20 | Biology                  |                  0 |
+|   30 | Chemistry                |                  0 |
+|   40 | Classics                 |                  0 |
+|   60 | English                  |                  0 |
+|   70 | Anthropology             |                  0 |
+|   90 | German                   |                  0 |
+|  100 | History                  |                  0 |
+|  110 | Mathematics              |                  0 |
+|  130 | Near Eastern Studies     |                  0 |
+|  140 | History of Science       |                  0 |
+|  150 | Philosophy               |                  0 |
+|  170 | Physics and Astronomy    |                  0 |
+|  180 | Economics                |                  0 |
+|  190 | Political Science        |                  0 |
+|  200 | Psychology               |                  0 |
+|  340 | French                   |                  0 |
+|  350 | Hispanic/Italian Studies |                  0 |
+|  530 | Mechanical Engineering   |                  0 |
+|  540 | Chemical Engineering     |                  0 |
+|  560 | Civil Engineering        |                  0 |
+|  580 | Biomedical Engineering   |                  0 |
++------+--------------------------+--------------------+
+22 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 40
+MySQL [cs41518_yzhou113_db]> SELECT a.Fname AS Student_Fname, a.LName AS Student_Lname, c.CName AS Course_Name, b.Grade, d.Fname AS Instructor_Fname, d.Lname AS Instructor_Lname
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Faculty AS d WHERE a.StuID = b.StuID AND b.CID = c.CID AND c.Instructor = d.FacID AND a.StuID IN
+    -> (SELECT StuID FROM Preferences WHERE SleepHabits = 'EarlyRiser' AND (Smoking = 'no' OR Smoking = 'no-accept')) 
+    -> AND a.StuID NOT IN 
+    -> (SELECT StuID FROM Has_Allergy);
++---------------+---------------+--------------------------------------+-------+------------------+------------------+
+| Student_Fname | Student_Lname | Course_Name                          | Grade | Instructor_Fname | Instructor_Lname |
++---------------+---------------+--------------------------------------+-------+------------------+------------------+
+| Eric          | Epp           | MIND, BRAIN, COMPUTERS               | B+    | Paul             | Smolensky        |
+| Eric          | Epp           | COGNITIVE NEUROSCIENCE               | B     | Brenda           | Rapp             |
+| Eric          | Epp           | SOUND STRUCTURES IN NATURAL LANGUAGE | B     | Luigi            | Burzio           |
+| Eric          | Epp           | INTRO TO PROGRAMMING IN JAVA         | B+    | Stacey           | Jones            |
+| Eric          | Epp           | DATABASE SYSTEMS                     | B     | David            | Yarowsky         |
++---------------+---------------+--------------------------------------+-------+------------------+------------------+
+5 rows in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 41
+MySQL [cs41518_yzhou113_db]> (SELECT Fname, LName, Age FROM Student WHERE Age = (SELECT MAX(AGE) FROM Student))
+    -> UNION ALL
+    -> (SELECT Fname, LName, Age FROM Student WHERE Age = (SELECT MIN(AGE) FROM Student));
++-------+--------+------+
+| Fname | LName  | Age  |
++-------+--------+------+
+| Bruce | Wilson |   27 |
+| Susan | Lee    |   16 |
++-------+--------+------+
+2 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 48
+MySQL [cs41518_yzhou113_db]> SELECT c.CID, c.CName AS 'Course Name', c.Credits, b.Grade AS LetGrade, d.gradepoint AS Gradepoint
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Gradeconversion AS d
+    -> WHERE a.Fname = 'Bruce' AND a.LName = 'Wilson' AND a.StuID = b.StuID AND b.CID = c.CID AND b.Grade = d.lettergrade;
++---------+-----------------------------------------+---------+----------+------------+
+| CID     | Course Name                             | Credits | LetGrade | Gradepoint |
++---------+-----------------------------------------+---------+----------+------------+
+| 050.427 | THE HISTORY OF ROMANCE LANGUAGES        |       3 | B        |          3 |
+| 050.670 | FORMAL METHODS IN COGNITIVE SCIENCE     |       3 | B        |          3 |
+| 050.802 | RESEARCH SEMINAR IN COGNITIVE PROCESSES |       1 | C        |          2 |
+| 550.681 | NUMERICAL ANALYSIS                      |       3 | B        |          3 |
+| 600.109 | INTRO TO PROGRAMMING IN C/C++           |       3 | A-       |        3.7 |
+| 600.461 | COMPUTER VISION                         |       3 | A        |          4 |
+| 600.465 | INTRO TO NATURAL LANGUAGE PROCESSING    |       3 | C        |          2 |
++---------+-----------------------------------------+---------+----------+------------+
+7 rows in set (0.03 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 49
+MySQL [cs41518_yzhou113_db]> SELECT a.StuID, SUM(c.Credits) AS 'Total Credits (Major Course)', SUM(c.Credits*d.gradepoint)/SUM(c.Credits) AS GPA
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Gradeconversion AS d
+    -> WHERE a.Fname = 'Bruce' AND a.LName = 'Wilson' AND a.StuID = b.StuID AND b.CID = c.CID AND b.Grade = d.lettergrade AND c.DNO = a.Major;
++-------+------------------------------+------------------+
+| StuID | Total Credits (Major Course) | GPA              |
++-------+------------------------------+------------------+
+|  1017 |                            9 | 3.23333334922791 |
++-------+------------------------------+------------------+
+1 row in set (0.02 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 50
+MySQL [cs41518_yzhou113_db]> SELECT r2.Fname, r2.LName, SUM(r1.Credits) AS 'Total Credits (Major Course)', FORMAT(SUM(r1.Credits*r1.gradepoint)/SUM(r1.Credits),1) AS GPA
+    -> FROM Student AS r2
+    -> LEFT JOIN
+    -> (SELECT a.StuID, c.Credits, d.gradepoint 
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Gradeconversion AS d
+    -> WHERE a.StuID = b.StuID AND b.CID = c.CID AND b.Grade = d.lettergrade AND c.DNO = a.Major) AS r1
+    -> ON r2.StuID = r1.StuID
+    -> GROUP BY r2.StuID;
++---------+----------+------------------------------+------+
+| Fname   | LName    | Total Credits (Major Course) | GPA  |
++---------+----------+------------------------------+------+
+| Linda   | Smith    |                           13 | 3.2  |
+| Tracy   | Kim      |                           13 | 3.0  |
+| Shiela  | Jones    |                           15 | 3.1  |
+| Dinesh  | Kumar    |                           19 | 2.8  |
+| Paul    | Gompers  |                           11 | 2.9  |
+| Andy    | Schultz  |                           13 | 3.0  |
+| Lisa    | Apap     |                           15 | 3.1  |
+| Jandy   | Nelson   |                           15 | 3.2  |
+| Eric    | Tai      |                         NULL | NULL |
+| Derek   | Lee      |                            3 | 3.3  |
+| David   | Adams    |                            3 | 3.3  |
+| Steven  | Davis    |                            6 | 3.5  |
+| Charles | Norris   |                           21 | 3.6  |
+| Susan   | Lee      |                           10 | 3.3  |
+| Mark    | Schwartz |                            6 | 3.0  |
+| Bruce   | Wilson   |                            9 | 3.2  |
+| Michael | Leighton |                           13 | 3.0  |
+| Arthur  | Pang     |                           11 | 2.9  |
+| Ian     | Thornton |                         NULL | NULL |
+| George  | Andreou  |                         NULL | NULL |
+| Michael | Woods    |                         NULL | NULL |
+| David   | Shieber  |                         NULL | NULL |
+| Stacy   | Prater   |                         NULL | NULL |
+| Mark    | Goldman  |                            7 | 4.0  |
+| Eric    | Pang     |                            6 | 4.0  |
+| Paul    | Brody    |                         NULL | NULL |
+| Eric    | Rugh     |                            4 | 3.3  |
+| Jun     | Han      |                         NULL | NULL |
+| Lisa    | Cheng    |                           20 | 2.9  |
+| Sarah   | Smith    |                         NULL | NULL |
+| Eric    | Brown    |                            8 | 2.2  |
+| William | Simms    |                         NULL | NULL |
+| Eric    | Epp      |                           10 | 3.1  |
+| Sarah   | Schmidt  |                           13 | 3.2  |
++---------+----------+------------------------------+------+
+34 rows in set (0.32 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 55
+MySQL [cs41518_yzhou113_db]> SELECT c.Fname, c.LName, c.Age 
+    -> FROM Student AS c 
+    -> WHERE c.StuID IN (  
+    -> SELECT StuID FROM Has_Allergy GROUP BY StuID HAVING COUNT(DISTINCT Allergy) = (SELECT COUNT(DISTINCT Allergy) FROM Allergy_Type));
+Empty set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 56
+MySQL [cs41518_yzhou113_db]> SELECT c.Fname, c.LName, c.Age 
+    -> FROM Student AS c 
+    -> WHERE c.StuID IN (  
+    -> SELECT StuID FROM Has_Allergy GROUP BY StuID HAVING COUNT(DISTINCT Allergy) = (SELECT COUNT(DISTINCT Allergy) FROM Allergy_Type))
+    -> AND c.StuID NOT IN 
+    -> (SELECT StuID FROM Has_Pet);
+Empty set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 57 & Assuming all students has enrolled in al least one course
+MySQL [cs41518_yzhou113_db]> SELECT a.Fname, a.LName, a.Age
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Gradeconversion AS d
+    -> WHERE a.StuID = b.StuID AND b.CID = c.CID AND b.Grade = d.lettergrade AND a.StuID IN
+    -> (SELECT StuID FROM Enrolled_in GROUP BY StuID HAVING COUNT(CID) >= 2)
+    -> GROUP BY a.StuID HAVING SUM(c.Credits*d.gradepoint)/SUM(c.Credits) =
+    -> (
+    -> SELECT SUM(c.Credits*d.gradepoint)/SUM(c.Credits)
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Gradeconversion AS d
+    -> WHERE a.StuID = b.StuID AND b.CID = c.CID AND b.Grade = d.lettergrade AND a.StuID IN
+    -> (SELECT StuID FROM Enrolled_in GROUP BY StuID HAVING COUNT(CID) >= 2)
+    -> GROUP BY a.StuID ORDER BY SUM(c.Credits*d.gradepoint)/SUM(c.Credits) DESC LIMIT 1
+    -> );
++-------+----------+------+
+| Fname | LName    | Age  |
++-------+----------+------+
+| Ian   | Thornton |   22 |
++-------+----------+------+
+1 row in set (2.27 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 59
+MySQL [cs41518_yzhou113_db]> SELECT SUM(c.Hours_Played) AS 'Total Hours Gaming' 
+    -> FROM 
+    -> Plays_Games AS c,
+    -> (SELECT StuID FROM Enrolled_in GROUP BY StuID HAVING COUNT(DISTINCT CID) =
+    -> (SELECT COUNT(DISTINCT b.CID) FROM Department AS a, Course AS b WHERE a.DNO = b.DNO AND a.DName = 'Computer Science')) AS r1
+    -> WHERE c.StuID = r1.StuID;
++--------------------+
+| Total Hours Gaming |
++--------------------+
+|               NULL |
++--------------------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]>  
+MySQL [cs41518_yzhou113_db]> # Query Number 60
+MySQL [cs41518_yzhou113_db]> SELECT f.ClubName FROM Student AS d, Member_of_club AS e, Club AS f WHERE d.StuID 
+    -> NOT IN
+    -> (SELECT r2.StuID
+    -> FROM 
+    -> Enrolled_in AS r2,
+    -> (SELECT c.CID FROM Faculty AS a, Faculty AS b, Course AS c WHERE a.Building = b.Building AND  b.Fname = 'Randal' AND b.LName = 'Burns' AND a.FacID = c.Instructor) AS r1
+    -> WHERE r2.CID = r1.CID) AND d.StuID = e.StuID AND e.ClubID = f.ClubID
+    -> ;
++-----------------------------+
+| ClubName                    |
++-----------------------------+
+| Bootup Baltimore            |
+| Tennis Club                 |
+| Hopkins Student Enterprises |
+| Bootup Baltimore            |
++-----------------------------+
+4 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 61
+MySQL [cs41518_yzhou113_db]> SELECT CName FROM Course WHERE CID IN (
+    -> SELECT c.CID FROM Participates_in AS a, Faculty_Participates_in AS b, Course AS c WHERE a.actid = b.actid AND b.FacID = c.Instructor AND NOT EXISTS (SELECT * FROM Enrolled_in AS d, Participates_in AS e WHERE d.CID = c.CID AND d.StuID = e.stuid AND e.actid  = b.actid) ORDER BY b.FacID)
+    -> ;
++--------------------------------------+
+| CName                                |
++--------------------------------------+
+| COMPUTER LITERACY                    |
+| INTRO TO PROGRAMMING IN C/C++        |
+| EXPLORING THE INTERNET               |
+| JAVA PROGRAMMING                     |
+| DATA STRUCTURES in JAVA              |
+| DISTRIBUTED SYSTEMS                  |
+| DISTRIBUTED SYSTEMS                  |
+| QUANTITATIVE MEDICAL COMPUTING       |
+| COMPUTER VISION                      |
+| COMPUTER SCIENCE INTERNSHIP          |
+| SEMINAR ON COMPUTATIONAL GEOMETRY    |
+| INTRODUCTION TO OPTIMIZATION         |
+| STATISTICAL INFERENCE                |
+| TOPICS IN APPLIED MATH               |
+| LANGUAGE AND MIND                    |
+| SOUND STRUCTURES IN NATURAL LANGUAGE |
+| COMP. MODELS OF SENTENCE PROCESSING  |
++--------------------------------------+
+17 rows in set (0.06 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 62
+MySQL [cs41518_yzhou113_db]> SELECT ResName, Address FROM Restaurant WHERE ResID IN 
+    -> (SELECT a.ResID FROM Restaurant AS a LEFT JOIN Visits_Restaurant AS b ON a.ResID = b.ResID GROUP BY a.ResID HAVING SUM(b.Spent)/COUNT(b.Spent) = 
+    -> (SELECT SUM(b.Spent)/COUNT(b.Spent) FROM Restaurant AS a LEFT JOIN Visits_Restaurant AS b ON a.ResID = b.ResID GROUP BY a.ResID ORDER BY SUM(b.Spent)/COUNT(b.Spent) DESC LIMIT 1));
++-----------+--------------------------------------+
+| ResName   | Address                              |
++-----------+--------------------------------------+
+| Honeygrow | 3212 St Paul St, Baltimore, MD 21218 |
++-----------+--------------------------------------+
+1 row in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 63
+MySQL [cs41518_yzhou113_db]> SELECT x1.ResTypeName, x1.ResTypeDescription, x2.av AS 'Average Spend Per Visit' FROM Restaurant_Type AS x1, (SELECT r1.ResTypeID, SUM(r2.Spent)/COUNT(r2.Spent) AS av
+    -> FROM
+    -> Restaurant_Type AS r1 LEFT JOIN
+    -> (SELECT a.*, d.Spent FROM Restaurant_Type AS a, Type_Of_Restaurant AS b, Restaurant AS c, Visits_Restaurant AS d WHERE a.ResTypeID = b.ResTypeID AND b.ResID = c.ResID AND c.ResID = d.ResID) AS r2 ON r1.ResTypeID = r2.ResTypeID GROUP BY r1.ResTypeID HAVING SUM(r2.Spent)/COUNT(r2.Spent) = 
+    -> (SELECT SUM(r2.Spent)/COUNT(r2.Spent)
+    -> FROM
+    -> Restaurant_Type AS r1 LEFT JOIN
+    -> (SELECT a.*, d.Spent FROM Restaurant_Type AS a, Type_Of_Restaurant AS b, Restaurant AS c, Visits_Restaurant AS d WHERE a.ResTypeID = b.ResTypeID AND b.ResID = c.ResID AND c.ResID = d.ResID) AS r2 ON r1.ResTypeID = r2.ResTypeID GROUP BY r1.ResTypeID ORDER BY SUM(r2.Spent)/COUNT(r2.Spent) DESC LIMIT 1)) AS x2 WHERE x1.ResTypeID = x2.ResTypeID
+    -> ;
++-------------+--------------------------+-------------------------+
+| ResTypeName | ResTypeDescription       | Average Spend Per Visit |
++-------------+--------------------------+-------------------------+
+| Stir-fry    | Classic Chinese cooking. |        13.1999998092651 |
++-------------+--------------------------+-------------------------+
+1 row in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 64
+MySQL [cs41518_yzhou113_db]> SELECT r2.Fname, r2.LName, r2.Age, r3.DName AS Major, r4.city_name AS 'Home City', MAX(r1.Spent) AS 'Max Spending'
+    -> FROM 
+    -> (SELECT StuID, Spent FROM Visits_Restaurant WHERE StuID IN
+    -> (SELECT d.StuID FROM Restaurant_Type AS a, Type_Of_Restaurant AS b, Restaurant AS c, Visits_Restaurant AS d WHERE a.ResTypeName = 'Stir-fry' AND a.ResTypeID = b.ResTypeID AND b.ResID = c.ResID AND c.ResID = d.ResID AND d.Time LIKE '%2017%')) AS r1, 
+    -> Student AS r2, Department AS r3, City AS r4
+    -> WHERE r1.StuID = r2.StuID AND r2.Major = r3.DNO AND r2.city_code = r4.city_code GROUP BY r1.StuID;
++-------+-------+------+-----------------------+-----------+------------------+
+| Fname | LName | Age  | Major                 | Home City | Max Spending     |
++-------+-------+------+-----------------------+-----------+------------------+
+| Eric  | Brown |   20 | Mathematical Sciences | Atlanta   | 13.1999998092651 |
++-------+-------+------+-----------------------+-----------+------------------+
+1 row in set, 1 warning (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 65
+MySQL [cs41518_yzhou113_db]> SELECT AVG(collective) AS Average
+    -> FROM 
+    -> (SELECT d.StuID, SUM(d.Spent) as collective
+    -> FROM Restaurant_Type AS a, Type_Of_Restaurant AS b, Restaurant AS c, Visits_Restaurant AS d WHERE a.ResTypeName = 'Sandwich' AND a.ResTypeID = b.ResTypeID AND b.ResID = c.ResID AND c.ResID = d.ResID AND d.StuID IN
+    -> (SELECT d.StuID FROM Restaurant_Type AS a, Type_Of_Restaurant AS b, Restaurant AS c, Visits_Restaurant AS d WHERE a.ResTypeName = 'Sandwich' AND a.ResTypeID = b.ResTypeID AND b.ResID = c.ResID AND c.ResID = d.ResID AND d.Time LIKE '%2017%') GROUP BY d.StuID) AS x1;
++------------------+
+| Average          |
++------------------+
+| 6.53000020980835 |
++------------------+
+1 row in set, 1 warning (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 66
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Age FROM Student WHERE StuID IN
+    -> (SELECT b.StuID FROM Pets AS a, Has_Pet AS b WHERE a.PetID = b.PetID AND (a.PetType = 'cat' OR a.PetType = 'dog'))
+    -> AND StuID IN
+    -> (SELECT a.StuID FROM Has_Allergy AS a, Allergy_Type AS b WHERE a.Allergy = b.Allergy AND b.AllergyType = 'animal' AND (b.Allergy = 'Dog' OR b.Allergy = 'Cat'));
++-------+-------+------+
+| Fname | LName | Age  |
++-------+-------+------+
+| Linda | Smith |   18 |
++-------+-------+------+
+1 row in set (0.01 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 67
+MySQL [cs41518_yzhou113_db]> SELECT Fname, LName, Age FROM Student WHERE StuID IN
+    -> (SELECT a.StuID
+    -> FROM Has_Pet AS a, Pets AS b, Has_Allergy AS c WHERE a.PetID = b.PetID AND a.StuID = c.StuID AND ((b.PetType = 'cat' AND c.Allergy = 'Cat') OR (b.PetType = 'dog' AND c.Allergy = 'Dog')));
++-------+-------+------+
+| Fname | LName | Age  |
++-------+-------+------+
+| Linda | Smith |   18 |
++-------+-------+------+
+1 row in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 68
+MySQL [cs41518_yzhou113_db]> SELECT a.dorm_name, a.student_capacity FROM Dorm AS a, Has_amenity AS b, Dorm_amenity AS c WHERE a.dormid = b.dormid AND b.amenid = c.amenid aND c.amenity_name = 'Allows Pets';
++----------------+------------------+
+| dorm_name      | student_capacity |
++----------------+------------------+
+| Dorm-plex 2000 |              400 |
+| Fawlty Towers  |              355 |
++----------------+------------------+
+2 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 69
+MySQL [cs41518_yzhou113_db]> SELECT a.Fname, a.LName, a.Age, c.dorm_name
+    -> FROM Student AS a, Lives_in AS b, Dorm AS c WHERE a.StuID = b.stuid AND b.dormid = c.dormid AND a.StuID IN (SELECT StuID FROM Has_Pet)
+    -> AND c.dormid NOT IN
+    -> (SELECT a.dormid FROM Dorm AS a, Has_amenity AS b, Dorm_amenity AS c WHERE a.dormid = b.dormid AND b.amenid = c.amenid aND c.amenity_name = 'Allows Pets');
++-------+-------+------+----------------------+
+| Fname | LName | Age  | dorm_name            |
++-------+-------+------+----------------------+
+| Linda | Smith |   18 | Anonymous Donor Hall |
+| Tracy | Kim   |   19 | Smith Hall           |
++-------+-------+------+----------------------+
+2 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 70
+MySQL [cs41518_yzhou113_db]> SELECT a.activity_name, AVG(c.AGE) AS 'Average Age'
+    -> FROM Activity AS a, Participates_in AS b, Student AS c WHERE a.actid = b.actid AND b.stuid = c.StuID GROUP BY a.actid;
++-------------------+-------------+
+| activity_name     | Average Age |
++-------------------+-------------+
+| Mountain Climbing |     21.1667 |
+| Canoeing          |     20.5000 |
+| Kayaking          |     18.4000 |
+| Spelunking        |     18.6667 |
+| Extreme Canasta   |     19.5000 |
+| Soccer            |     19.4444 |
+| Baseball          |     19.2000 |
+| Football          |     19.7857 |
+| Volleyball        |     18.5000 |
+| Canasta           |     21.3333 |
+| Chess             |     18.5000 |
+| Crossword Puzzles |     19.0000 |
+| Proselytizing     |     22.0000 |
++-------------------+-------------+
+13 rows in set (0.00 sec)
+
+MySQL [cs41518_yzhou113_db]> 
+MySQL [cs41518_yzhou113_db]> # Query Number 71
+MySQL [cs41518_yzhou113_db]> SELECT a.activity_name, AVG(c.AGE) AS 'Average Age', AVG(GPA) AS 'Average GPA' 
+    -> FROM Activity AS a, Participates_in AS b, Student AS c,  
+    -> (SELECT r2.StuID, SUM(r1.Credits*r1.gradepoint)/SUM(r1.Credits) AS GPA
+    -> FROM Student AS r2
+    -> LEFT JOIN
+    -> (SELECT a.StuID, c.Credits, d.gradepoint 
+    -> FROM Student AS a, Enrolled_in AS b, Course AS c, Gradeconversion AS d
+    -> WHERE a.StuID = b.StuID AND b.CID = c.CID AND b.Grade = d.lettergrade) AS r1
+    -> ON r2.StuID = r1.StuID
+    -> GROUP BY r2.StuID) AS result
+    -> WHERE a.actid = b.actid AND b.stuid = c.StuID AND result.StuID = c.StuID GROUP BY a.actid;
++-------------------+-------------+------------------+
+| activity_name     | Average Age | Average GPA      |
++-------------------+-------------+------------------+
+| Mountain Climbing |     21.1667 | 3.24028974829021 |
+| Canoeing          |     20.5000 | 3.14287441354187 |
+| Kayaking          |     18.4000 | 3.17606960010433 |
+| Spelunking        |     18.6667 | 3.16976264814843 |
+| Extreme Canasta   |     19.5000 | 3.16141304762467 |
+| Soccer            |     19.4444 | 3.17255165875048 |
+| Baseball          |     19.2000 | 3.10135994466614 |
+| Football          |     19.7857 | 3.28904368831904 |
+| Volleyball        |     18.5000 | 3.16169992968473 |
+| Canasta           |     21.3333 | 3.19096364028621 |
+| Chess             |     18.5000 | 3.28462185472637 |
+| Crossword Puzzles |     19.0000 | 3.13872872767184 |
+| Proselytizing     |     22.0000 | 3.00068650883995 |
++-------------------+-------------+------------------+
+13 rows in set (0.99 sec)
+
+MySQL [cs41518_yzhou113_db]> notee
