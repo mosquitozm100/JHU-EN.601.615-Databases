@@ -1,0 +1,85 @@
+
+Due to my desire that HW2 not interfere with Fall Break, and based on student feedback during class today, I've extended the submission deadline for HW2 and the midterm as follows:
+
+HOMEWORK #2:
+
+   HW2 now due Wednesday 10/28/20 at 11:59 PM (Baltimore time)
+   HW2 latest submission if using full 5-days extension - Monday 11/02/20 11:59PM (Baltimore time)
+   Sample solutions for HW2 will be distributed on 11/03/20 morning.
+
+MIDTERM:
+ New midterm date: Thursday 11/05/2020 during class 3-4:30 PM (Baltimore Time)
+
+  If you are physically located in a time zone in the Americas, Europe or Africa
+   you are expected to take the exam during the standard 3-4:30PM class time (Baltimore time).
+
+  If you are physically located in Asia, we will arrange for an alternative exam
+  time slot on Friday afternoon 11/06/2020 Asia time (approximately 11PM on 11/05/20 PM Baltimore time).
+  If you need to take the exam during this alternative time slot, please email Ankur (akejriw2@jhu.edu) before 10/30/20,
+  including your name and availability during this alternative exam time slot for students in Asia.
+  Those not preregistering with Ankur will be expected to take the midterm during the normal in-class time.
+
+EXAM CONTENT:
+  The midterm exam will cover all class content up to (and including) the 10/20/20 class.
+  Topics include:
+    *  The substantial bulk of the exam will focus on the relational model and
+       relational query languages: Relational Algebra, Tuple Relational Calculus, SQL and QBE:
+          with multiple 5-minute queries to be written in these relational languages
+    *  Functional Dependencies, integrity constraints, Armstrong's axioms,
+           FD closures and canonical cover, r satisfying F, F holding on r,
+           formal candidate key determination using FDs
+    *  Database design principles and the E-R model
+    *  Views and derived relations (including view materialization/caching vs. macro substitution
+          and problems updating relations via views containing aggregations, etc.)
+
+   Topics subsequent to the 10/20/20 class will appear on the final exam.
+
+   Last year's midterm exam will be distributed and the 2019 solution set 
+     made available on 11/03/20 and discussed in midterm review sessions 
+     given on 11/04/20 and 11/05/20 (see below).
+   The content, structure, format and difficulty of last year's exam
+     will be similar to last year's exam, and you are encouraged to 
+     use last year's exam as an indication of the content/format/difficulty.
+   
+   The content of the exams for 601.315 and 601.415/615 will differ 
+   substantially, with most 601.415/615 questions being more difficult
+   than their 601.315 equivalent.
+
+   The exam will be answered via a google doc (with everyone given a unique URL
+   assigned to them) in plain text. Symbols in the relational algebra will
+   be entered using upper-cased word equivalents (e.g. SIGMA, PI, RHO, JOIN, etc.).
+ 
+MIDTERM EXAM RULES:
+   The midterm exam will be open book and open note.
+   The only exception is that the only prior midterm and homeworks (and their solution sets)
+     that may be viewed are those explicitly given on the 2020 class website.
+   Access, use or review of any prior midterm or homework solution sets are expressly forbidden.
+   While most questions on the 2020 exam will be entirely new for 2020, a subset may
+   be adapted from other databases homeworks or exams given at some point in the past 20 years.
+   As noted previously, two average question scores will be computed for each student,
+   based on (1) the entirely new questions and (2) previously adapted questions. 
+   Student performance significantly higher on the previously adapted questions relative
+   to the entirely new questions will be considered as evidence of violation of this rule.
+   Students are NOT allowed to work together or discuss answers when taking the exam,
+   and plagiarism/copying detection software will be employed to detect any such collaboration
+   or answer copying.  Any questions regarding the exam and how to interpret questions
+   on the exam should be addressed exclusively to the instructor or CAs on exam duty.
+   
+
+MIDTERM REVIEW/HELP SESSIONS:
+   Two review/help sessions for the midterm will be given on the normal class zoom link.
+      * Wednesday 11/4/20 late afternoon (time TBA)
+      * Thursday 11/05/20 from 10:00AM-11:00AM (Baltimore Time)
+   Students are strongly encouraged to take the 2019 exam under timed conditions
+     prior to one of these review sessions, where answers and explanations will be discussed.
+
+CLASS RECORDINGS:
+   As before, class zoom-session recordings are available at:
+       http://www.cs.jhu.edu/~yarowsky/databases-2010-10-13.mp4 
+       http://www.cs.jhu.edu/~yarowsky/databases-2010-10-15.mp4 
+       http://www.cs.jhu.edu/~yarowsky/databases-2010-10-20.mp4 
+    and at other equivalent class-date file links substituting the desired date.
+   All class slides are available at:  http://www.cs.jhu.edu/~yarowsky/cs415.html
+   The following comparative relational language slides are particularly helpful
+     for exam preparation:  http://www.cs.jhu.edu/~yarowsky/comparative.pdf
+
