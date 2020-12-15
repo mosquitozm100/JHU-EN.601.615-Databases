@@ -1,0 +1,59 @@
+<head>
+  <title>List A Signle Student's Raw Score</title>
+ </head>
+ <body>
+
+
+
+ <?php
+// PHP code just started
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+// display errors
+
+$db = mysqli_connect("dbase.cs.jhu.edu", "20fa_nzhang50", "8kaFQbyTw8");
+// ********* Remember to use your MySQL username and password here ********* //
+
+if (!$db) {
+
+  echo "Connection failed!";
+
+} else {
+  $ssn = $_POST['ssn'];
+  mysqli_select_db($db,"20fa_nzhang50_db");
+  // ********* Remember to use the name of your database here ********* //
+
+  $result = mysqli_query($db,"call ShowRawScore($ssn)");
+  // a simple query on the Student table
+
+  if (!$result) {
+
+    echo "Query Failed\n";
+    print mysqli_error();
+
+  } 
+  // elseif (!$myrow = mysqli_fetch_array($result)){
+  //   echo "SSN Not Found!\n";
+  // }
+  else {
+    echo "<table border=1>\n";
+    echo "<tr><td>SSN</td><td>FName</td><td>LName</td><td>Section</td><td>HW1</td><td>HW2a</td><td>HW2b</td><td>Midterm</td><td>HW3</td><td>FExam</td></tr>\n";
+    $SSN_Found = FALSE;
+    while ($myrow = mysqli_fetch_array($result)) {
+      $SSN_Found = TRUE;
+      printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n", $myrow["SSN"], $myrow["FName"], $myrow["LName"],$myrow["Section"],$myrow["HW1"],$myrow["HW2a"],$myrow["HW2b"],$myrow["Midterm"],$myrow["HW3"],$myrow["FExam"]);
+    }
+    if(!$SSN_Found){
+      echo "SSN Not Found!\n";
+    }
+
+    echo "</table>\n";
+
+  }
+
+}
+
+// PHP code about to end
+
+ ?>

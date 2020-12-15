@@ -1,0 +1,107 @@
+DROP TABLE IF EXISTS Rawscores;
+CREATE TABLE Rawscores(
+        SSN VARCHAR(4) primary key,
+        LName   VARCHAR(11),
+        FName   VARCHAR(11),
+        Section VARCHAR(3),
+    HW1     DECIMAL(5,2),
+    HW2a    DECIMAL(5,2),
+    HW2b    DECIMAL(5,2),
+    Midterm DECIMAL(5,2),
+    HW3 DECIMAL(5,2),
+    FExam   DECIMAL(5,2)
+        );
+
+INSERT INTO Rawscores VALUES ('9176', 'Epp', 'Eric', '415', 99, 79, 31, 99, 119, 199);
+INSERT INTO Rawscores VALUES ('5992', 'Lin', 'Linda', '415', 98, 71, 29, 83, 105, 171);
+INSERT INTO Rawscores VALUES ('3774', 'Adams', 'Abigail', '315', 85, 63, 27, 88, 112, 180);
+INSERT INTO Rawscores VALUES ('1212', 'Osborne', 'Danny', '315', 29, 31, 12, 66, 61, 106);
+INSERT INTO Rawscores VALUES ('4198', 'Wilson', 'Amanda', '315', 84, 73, 27, 87, 115, 172);
+INSERT INTO Rawscores VALUES ('1006', 'Nielsen', 'Bridget', '415', 93, 76, 28, 95, 111, 184);
+INSERT INTO Rawscores VALUES ('8211', 'Clinton', 'Chelsea', '415', 100, 80, 32, 100, 120, 200);
+INSERT INTO Rawscores VALUES ('1180', 'Quayle', 'Jonathan', '315', 50, 40, 16, 55, 68, 181);
+INSERT INTO Rawscores VALUES ('0001', 'TOTAL', 'POINTS', '415', 100, 80, 32, 100, 120, 200);
+INSERT INTO Rawscores VALUES ('0002', 'WEIGHT','OFSCORE','415', 0.1,0.1,0.05,0.25,0.1,0.4);
+
+drop table Passwords;
+create table Passwords (
+  CurPasswords  VARCHAR(15)
+);
+
+INSERT INTO Passwords VALUES ('OpenSesame');
+INSERT INTO Passwords VALUES ('GuessMe');
+INSERT INTO Passwords VALUES ('ImTheTA');
+
+delimiter //
+DROP PROCEDURE IF EXISTS ShowRawScore //
+CREATE PROCEDURE ShowRawScore(IN stuSSN varchar(4))
+    SELECT HW1, HW2a, HW2b, Midterm, HW3, FExam
+    FROM Rawscores
+    WHERE SSN = stuSSN;
+//
+
+
+
+create view WtdPtds as 
+select 1/R1.HW1 * R2.HW1 as hw1, 1/R1.HW2a * R2.HW2a as hw2a , 1/R1.HW2b * R2.HW2b as hw2b, 1/R1.Midterm * R2.Midterm as midterm, 1/R1.HW3 * R2.Hw3 as hw3, 1/R1.FExam * R2.FExam as final
+from Rawscores as R1, Rawscores as R2 
+where R1.SSN = '0001' and R2.SSN ='0002';
+
+DROP PROCEDURE IF EXISTS ShowPercentages //
+CREATE PROCEDURE ShowPercentages(IN stuSSN varchar(4))
+    SELECT R1.SSN , R1.FName , R1.LName ,(R1.HW1*WtdPtds.hw1 + R1.HW2a*WtdPtds.hw2a + R1.HW2b*WtdPtds.hw2b + R1.Midterm*WtdPtds.midterm + R1.HW3 * WtdPtds.hw3 + R1.FExam*WtdPtds.final) * 100  as Cum_Avg , R1.HW1 / R2.HW1 * 100  , R1.HW2a / R2.HW2a * 100 , R1.HW2b / R2.HW2b * 100 , R1.Midterm / R2.Midterm * 100 , R1.HW3 / R2.HW3 * 100 , R1.FExam / R2.FExam * 100  
+    FROM WtdPtds , Rawscores as R1 , Rawscores as R2 
+    WHERE R1.SSN = stuSSN AND R2.SSN = "0001";
+//
+
+
+
+DROP PROCEDURE IF EXISTS AllRawScores//
+CREATE PROCEDURE AllRawScores()
+
+    SELECT * FROM Rawscores WHERE Rawscores.SSN != "0001" AND Rawscores.SSN != "0002" ORDER BY SSN , LName , FName;
+
+//
+
+DROP PROCEDURE IF EXISTS CheckPassword//
+CREATE PROCEDURE CheckPassword(IN passwd varchar(15))
+
+    SELECT 
+        CASE WHEN EXISTS 
+            ( SELECT CurPasswords 
+              FROM Passwords as PWD
+              WHERE PWD.CurPasswords = passwd
+                ) 
+    THEN 1
+    ELSE 0
+    END AS ReturnVal
+        
+//
+
+DROP PROCEDURE IF EXISTS AllPercentages //
+CREATE PROCEDURE AllPercentages()
+    SELECT R1.SSN , R1.FName , R1.LName ,R1.Section , (R1.HW1*WtdPtds.hw1 + R1.HW2a*WtdPtds.hw2a + R1.HW2b*WtdPtds.hw2b + R1.Midterm*WtdPtds.midterm + R1.HW3 * WtdPtds.hw3 + R1.FExam*WtdPtds.final) * 100  as Cum_Avg , R1.HW1 / R2.HW1 * 100  , R1.HW2a / R2.HW2a * 100 , R1.HW2b / R2.HW2b * 100 , R1.Midterm / R2.Midterm * 100 , R1.HW3 / R2.HW3 * 100 , R1.FExam / R2.FExam * 100  
+    FROM WtdPtds , Rawscores as R1 , Rawscores as R2 
+    WHERE R2.SSN = "0001" AND R1.SSN != "0001" AND R1.SSN != "0002"
+    ORDER BY R1.Section , Cum_Avg;
+//
+DROP VIEW IF EXISTS AllScores //
+CREATE view AllScores as 
+    SELECT (R1.HW1*WtdPtds.hw1 + R1.HW2a*WtdPtds.hw2a + R1.HW2b*WtdPtds.hw2b + R1.Midterm*WtdPtds.midterm + R1.HW3 * WtdPtds.hw3 + R1.FExam*WtdPtds.final) * 100  as Cum_Avg , R1.HW1 / R2.HW1 * 100 as hw1  , R1.HW2a / R2.HW2a * 100 as hw2a, R1.HW2b / R2.HW2b * 100 as hw2b, R1.Midterm / R2.Midterm * 100 as midterm , R1.HW3 / R2.HW3 * 100 as hw3, R1.FExam / R2.FExam * 100 as final 
+    FROM WtdPtds , Rawscores as R1 , Rawscores as R2 
+    WHERE R2.SSN = "0001" AND R1.SSN != "0001" AND R1.SSN != "0002"; //
+
+DROP PROCEDURE IF EXISTS Stats//
+CREATE PROCEDURE Stats(IN op VARCHAR(10))
+BEGIN 
+    IF op = "min" THEN SELECT "min",min(ALS.Cum_Avg),min(ALS.hw1) , min(ALS.hw2a) ,min(ALS.hw2b) , min(ALS.midterm) , min(ALS.hw3) , min(ALS.final) FROM AllScores as ALS ;
+    END IF ; 
+    IF op = "max" THEN SELECT "max" ,max(ALS.Cum_Avg),max(ALS.hw1) , max(ALS.hw2a) ,max(ALS.hw2b) , max(ALS.midterm) , max(ALS.hw3) , max(ALS.final) FROM AllScores as ALS ;
+    END IF ;
+    IF op = "mean" THEN SELECT "mean" ,avg(ALS.Cum_Avg),avg(ALS.hw1) , avg(ALS.hw2a) ,avg(ALS.hw2b) , avg(ALS.midterm) , avg(ALS.hw3) , avg(ALS.final) FROM AllScores as ALS ;
+    END IF ;
+    IF op = "std" THEN SELECT  "std" ,STDDEV(ALS.Cum_Avg),STDDEV(ALS.hw1) , STDDEV(ALS.hw2a) ,STDDEV(ALS.hw2b) , STDDEV(ALS.midterm) , STDDEV(ALS.hw3) , STDDEV(ALS.final) FROM AllScores as ALS ;
+    END IF ;
+
+END   
+//
